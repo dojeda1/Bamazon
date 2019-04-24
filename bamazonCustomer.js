@@ -1,6 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-// connection.end();
+
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -51,12 +51,15 @@ function startUp() {
 
 function purchaseCheck(itemId, buyQuantity) {
     connection.query(
-        "SELECT stock_quantity FROM products WHERE item_id = ?",
+        "SELECT product_name,stock_quantity,price FROM products WHERE item_id = ?",
         [itemId],
         function (err, res) {
             if (err) throw err;
 
-            var currentStock = res[0].stock_quantity
+            var itemName = res[0].product_name;
+            var itemPrice = res[0].price;
+            var currentStock = res[0].stock_quantity;
+
             console.log(currentStock);
 
             if (currentStock < buyQuantity) {
@@ -65,7 +68,7 @@ function purchaseCheck(itemId, buyQuantity) {
 
                 var newQuantity = currentStock - buyQuantity;
 
-                var query = connection.query(
+                connection.query(
                     "UPDATE products SET stock_quantity = ? WHERE item_id = ?", [
                         newQuantity,
                         itemId
@@ -73,10 +76,12 @@ function purchaseCheck(itemId, buyQuantity) {
                     function (err, res) {
                         if (err) throw err;
 
-                        console.log(res)
-                        console.log(query)
+                        console.log(`\nYour Order
+${itemName};
+Quantity: ${buyQuantity}
+Total: $${buyQuantity * itemPrice}\n`)
 
-
+                        connection.end();
 
                     }
                 );
