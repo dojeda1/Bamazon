@@ -51,13 +51,14 @@ function startUp() {
 
 function purchaseCheck(itemId, buyQuantity) {
     connection.query(
-        "SELECT product_name,stock_quantity,price FROM products WHERE item_id = ?",
+        "SELECT product_name,stock_quantity,price,product_sales FROM products WHERE item_id = ?",
         [itemId],
         function (err, res) {
             if (err) throw err;
 
             var itemName = res[0].product_name;
-            var itemPrice = res[0].price;
+            var itemPrice = parseFloat(res[0].price);
+            var itemSales = parseFloat(res[0].product_sales);
             var currentStock = parseInt(res[0].stock_quantity);
 
             console.log(currentStock);
@@ -67,10 +68,13 @@ function purchaseCheck(itemId, buyQuantity) {
             } else {
 
                 var newQuantity = currentStock - buyQuantity;
+                var customerTotal = buyQuantity * itemPrice;
+                var itemSalesTotal = itemSales + customerTotal;
 
                 connection.query(
-                    "UPDATE products SET stock_quantity = ? WHERE item_id = ?", [
+                    "UPDATE products SET stock_quantity = ?, product_sales = ? WHERE item_id = ?", [
                         newQuantity,
+                        itemSalesTotal,
                         itemId
                     ],
                     function (err, res) {
@@ -79,7 +83,7 @@ function purchaseCheck(itemId, buyQuantity) {
                         console.log(`\nYour Order
 ${itemName};
 Quantity: ${buyQuantity}
-Total: $${buyQuantity * itemPrice}\n`)
+Total: $${customerTotal}\n`)
 
                         connection.end();
 

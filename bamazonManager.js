@@ -143,7 +143,7 @@ function addProduct() {
         var itemQuantity = parseInt(choice.quantity);
 
         connection.query(
-            "INSERT INTO products(product_name,department_name,price,stock_quantity) VALUES (?,?,?,?);",
+            "INSERT INTO products(product_name,department_name,price,stock_quantity,product_sales) VALUES (?,?,?,?,0);",
             [itemName,
                 itemDep,
                 itemPrice,
@@ -151,7 +151,6 @@ function addProduct() {
             ],
             function (err, res) {
                 if (err) throw err;
-
 
                 console.log(`\nYou added ${itemName} to products\n`)
 
