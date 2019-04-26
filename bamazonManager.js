@@ -65,3 +65,51 @@ function viewLowInv() {
         connection.end();
     })
 };
+
+function addInv() {
+    inquirer.prompt([{
+            type: "input",
+            message: "Enter ID of the product you wish to add inventory to.",
+            name: "id",
+        },
+        {
+            type: "input",
+            message: "How many would you like to add?",
+            name: "quantity",
+        },
+    ]).then(function (choice) {
+        var itemId = choice.id;
+        var addQuantity = parseInt(choice.quantity);
+
+        connection.query(
+            "SELECT product_name,stock_quantity FROM products WHERE item_id = ?",
+            [itemId],
+            function (err, res) {
+                if (err) throw err;
+
+                var itemName = res[0].product_name;
+                var currentStock = parseInt(res[0].stock_quantity);
+
+                console.log(currentStock);
+
+                var newQuantity = currentStock + addQuantity;
+
+                connection.query(
+                    "UPDATE products SET stock_quantity = ? WHERE item_id = ?", [
+                        newQuantity,
+                        itemId
+                    ],
+                    function (err, res) {
+                        if (err) throw err;
+
+                        console.log(`\nYou added ${addQuantity} to ${itemName};
+New Quantity: ${newQuantity}\n`)
+
+                        connection.end();
+
+                    }
+                );
+            });
+
+    });
+}

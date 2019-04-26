@@ -43,7 +43,7 @@ function startUp() {
         },
     ]).then(function (choice) {
         var itemId = choice.id;
-        var buyQuantity = choice.quantity;
+        var buyQuantity = parseInt(choice.quantity);
 
         purchaseCheck(itemId, buyQuantity)
     })
@@ -58,7 +58,7 @@ function purchaseCheck(itemId, buyQuantity) {
 
             var itemName = res[0].product_name;
             var itemPrice = res[0].price;
-            var currentStock = res[0].stock_quantity;
+            var currentStock = parseInt(res[0].stock_quantity);
 
             console.log(currentStock);
 
