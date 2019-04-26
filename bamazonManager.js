@@ -43,7 +43,7 @@ connection.connect(function (err) {
                 break;
 
             case "Add New Product":
-                AddProduct();
+                addProduct();
                 break;
         }
 
@@ -112,4 +112,53 @@ New Quantity: ${newQuantity}\n`)
             });
 
     });
-}
+};
+
+function addProduct() {
+    inquirer.prompt([{
+            type: "input",
+            message: "Enter Product Name",
+            name: "name",
+        },
+        {
+            type: "list",
+            message: "Choose Department",
+            name: "department",
+            choices: ["Electronics", "Home & Kitchen", "Books", "Office Products", "Toys & Games", "Clothing", "Sports & Outdoors", "Automotive"]
+        },
+        {
+            type: "input",
+            message: "Enter Product Price",
+            name: "price",
+        },
+        {
+            type: "input",
+            message: "Enter Product Quantity",
+            name: "quantity",
+        }
+    ]).then(function (choice) {
+        var itemName = choice.name
+        var itemDep = choice.department;
+        var itemPrice = parseFloat(choice.price);
+        var itemQuantity = parseInt(choice.quantity);
+
+        connection.query(
+            "INSERT INTO products(product_name,department_name,price,stock_quantity) VALUES (?,?,?,?);",
+            [itemName,
+                itemDep,
+                itemPrice,
+                itemQuantity
+            ],
+            function (err, res) {
+                if (err) throw err;
+
+
+                console.log(`\nYou added ${itemName} to products\n`)
+
+                connection.end();
+
+            }
+        );
+    });
+
+};
