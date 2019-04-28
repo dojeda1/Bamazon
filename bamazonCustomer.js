@@ -65,6 +65,7 @@ function purchaseCheck(itemId, buyQuantity) {
 
             if (currentStock < buyQuantity) {
                 console.log("Not enough stock available to complete order.");
+                connection.end();
             } else {
 
                 var newQuantity = currentStock - buyQuantity;
