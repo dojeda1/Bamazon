@@ -1,7 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 
-
 var connection = mysql.createConnection({
     host: "localhost",
 
@@ -115,6 +114,16 @@ New Quantity: ${newQuantity}\n`)
 };
 
 function addProduct() {
+    var depArr = [];
+
+    connection.query("SELECT department_name FROM departments", function (err, res) {
+        if (err) throw err;
+        for (i = 0; i < res.length; i++) {
+            depArr.push(res[i].department_name);
+        }
+        // console.log(depArr);
+    });
+
     inquirer.prompt([{
             type: "input",
             message: "Enter Product Name",
@@ -124,7 +133,7 @@ function addProduct() {
             type: "list",
             message: "Choose Department",
             name: "department",
-            choices: ["Electronics", "Home & Kitchen", "Books", "Office Products", "Toys & Games", "Clothing", "Sports & Outdoors", "Automotive"]
+            choices: depArr
         },
         {
             type: "input",
