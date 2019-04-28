@@ -1,6 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-
+var Table = require("cli-table");
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -25,7 +25,22 @@ connection.connect(function (err) {
 function afterConnection() {
     connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
-        console.log(res);
+        // console.log(res);
+
+        var allProducts = new Table({
+            head: ['ID', 'Name', 'Department', 'Price', 'Quantity', 'Sales'],
+            colWidths: [10, 40, 20, 10, 10, 15]
+        });
+
+        for (i = 0; i < res.length; i++) {
+            var rowArr = [];
+            rowArr.push(res[i].item_id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity, res[i].product_sales);
+            allProducts.push(rowArr);
+        }
+        // table is an Array, so you can `push`, `unshift`, `splice` and friends
+
+        console.log(allProducts.toString());
+        console.log("");
         startUp();
     })
 }
