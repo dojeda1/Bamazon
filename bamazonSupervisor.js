@@ -58,42 +58,27 @@ ORDER BY departments.department_id;`, function (err, res) {
 function addDepartment() {
     inquirer.prompt([{
             type: "input",
-            message: "Enter Product Name",
+            message: "Enter Department Name",
             name: "name",
         },
         {
-            type: "list",
-            message: "Choose Department",
-            name: "department",
-            choices: ["Electronics", "Home & Kitchen", "Books", "Office Products", "Toys & Games", "Clothing", "Sports & Outdoors", "Automotive"]
-        },
-        {
             type: "input",
-            message: "Enter Product Price",
-            name: "price",
-        },
-        {
-            type: "input",
-            message: "Enter Product Quantity",
-            name: "quantity",
+            message: "Enter Department Overhead",
+            name: "overhead",
         }
     ]).then(function (choice) {
-        var itemName = choice.name
-        var itemDep = choice.department;
-        var itemPrice = parseFloat(choice.price);
-        var itemQuantity = parseInt(choice.quantity);
+        var depName = choice.name;
+        var depOverhead = parseFloat(choice.overhead);
 
         connection.query(
-            "INSERT INTO products(product_name,department_name,price,stock_quantity,product_sales) VALUES (?,?,?,?,0);",
-            [itemName,
-                itemDep,
-                itemPrice,
-                itemQuantity
+            "INSERT INTO departments(department_name,over_head_costs) VALUES (?,?);",
+            [depName,
+                depOverhead,
             ],
             function (err, res) {
                 if (err) throw err;
 
-                console.log(`\nYou added ${itemName} to products\n`)
+                console.log(`\nYou added ${depName} to departments\n`)
 
                 connection.end();
 
