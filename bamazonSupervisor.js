@@ -19,12 +19,15 @@ var connection = mysql.createConnection({
 connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
+    startUp();
+});
 
+function startUp() {
     inquirer.prompt({
             type: "list",
             message: "Which action would you like to perform?",
             name: "action",
-            choices: ["View Products Sales by Department", "Create New Department"]
+            choices: ["View Products Sales by Department", "Create New Department", "< Exit"]
         },
 
     ).then(function (choice) {
@@ -38,10 +41,14 @@ connection.connect(function (err) {
                 addDepartment();
                 break;
 
+            case "< Exit":
+                console.log("Good Bye.");
+                connection.end();
+                break;
         }
 
-    })
-});
+    });
+}
 
 function viewSales() {
     connection.query(`SELECT departments.department_id,departments.department_name,departments.over_head_costs AS "overhead" ,SUM(products.product_sales) AS "total_sales", ( SUM(products.product_sales) - departments.over_head_costs) AS "profit"
@@ -65,7 +72,7 @@ ORDER BY departments.department_id;`, function (err, res) {
         console.log("");
         console.log(allDepartments.toString());
         console.log("");
-        connection.end();
+        startUp();
     })
 };
 
@@ -94,7 +101,7 @@ function addDepartment() {
 
                 console.log(`\nYou added ${depName} to departments\n`)
 
-                connection.end();
+                startUp();
 
             }
         );
