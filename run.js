@@ -14,7 +14,7 @@ startUp();
 function startUp() {
     inquirer.prompt({
             type: "list",
-            message: "Select One",
+            message: "Select User",
             name: "action",
             choices: ["Customer", "Manager", "Supervisor", "< Exit"]
         },
@@ -35,7 +35,7 @@ function startUp() {
                 break;
 
             case "< Exit":
-                console.log("Good Bye.");
+                console.log("\nGood Bye.\n");
                 break;
         }
 

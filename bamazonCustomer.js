@@ -80,8 +80,9 @@ function customer(run) {
                 console.log(currentStock);
 
                 if (currentStock < buyQuantity) {
-                    console.log("Not enough stock available to complete order.");
+                    console.log("\nNot enough stock available to complete order.\n");
                     connection.end();
+                    run();
                 } else {
 
                     var newQuantity = currentStock - buyQuantity;
