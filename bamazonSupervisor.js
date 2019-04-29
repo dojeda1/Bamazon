@@ -100,20 +100,28 @@ ORDER BY departments.department_id;`, function (err, res) {
                     var depName = choice.name;
                     var depOverhead = parseFloat(choice.overhead);
 
-                    connection.query(
-                        "INSERT INTO departments(department_name,over_head_costs) VALUES (?,?);",
-                        [depName,
-                            depOverhead,
-                        ],
-                        function (err, res) {
-                            if (err) throw err;
+                    if (depOverhead > 0 && depName.length > 0) {
 
-                            console.log(`\nYou added ${depName} to departments\n`)
+                        connection.query(
+                            "INSERT INTO departments(department_name,over_head_costs) VALUES (?,?);",
+                            [depName,
+                                depOverhead,
+                            ],
+                            function (err, res) {
+                                if (err) throw err;
 
-                            startUp();
+                                console.log(`\nYou added ${depName} to departments\n`)
 
-                        }
-                    );
+                                startUp();
+
+                            }
+                        );
+
+                    } else {
+                        console.log("\nUser inputs must fit given fields. Try again.\n")
+                        startUp();
+                    }
+
                 });
 
             };

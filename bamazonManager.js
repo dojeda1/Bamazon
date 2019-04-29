@@ -26,6 +26,29 @@ function manager(run) {
                 database: "bamazon_db"
             });
 
+            // to be fixed later
+            function idCheck(id, blah) {
+                var idPresent = false;
+                connection.query("SELECT item_id FROM products", function (err, res) {
+                    var idArr = []
+                    if (err) throw err;
+                    // console.log(res)
+                    for (i = 0; i < res.length; i++) {
+                        idArr.push(String(res[i].item_id));
+                    }
+                    // console.log(idArr);
+                    idPresent = idArr.includes(id);
+                    console.log("Check 1: " + idPresent)
+                    blah();
+                })
+
+                function blah() {
+                    console.log("Check 2: " + idPresent)
+                    return idPresent;
+                }
+
+            }
+
             connection.connect(function (err) {
                 if (err) throw err;
                 // console.log("connected as id " + connection.threadId);
@@ -115,6 +138,7 @@ function manager(run) {
             };
 
             function addInv() {
+
                 inquirer.prompt([{
                         type: "input",
                         message: "Enter ID of the product you wish to add inventory to.",
@@ -129,35 +153,44 @@ function manager(run) {
                     var itemId = choice.id;
                     var addQuantity = parseInt(choice.quantity);
 
-                    connection.query(
-                        "SELECT product_name,stock_quantity FROM products WHERE item_id = ?",
-                        [itemId],
-                        function (err, res) {
-                            if (err) throw err;
+                    // var something = idCheck(itemId)
+                    // console.log("Check 3: " + something);
 
-                            var itemName = res[0].product_name;
-                            var currentStock = parseInt(res[0].stock_quantity);
+                    if (addQuantity > 0 && itemId > 0) {
 
-                            console.log(currentStock);
+                        connection.query(
+                            "SELECT product_name,stock_quantity FROM products WHERE item_id = ?",
+                            [itemId],
+                            function (err, res) {
+                                if (err) throw err;
 
-                            var newQuantity = currentStock + addQuantity;
+                                var itemName = res[0].product_name;
+                                var currentStock = parseInt(res[0].stock_quantity);
 
-                            connection.query(
-                                "UPDATE products SET stock_quantity = ? WHERE item_id = ?", [
-                                    newQuantity,
-                                    itemId
-                                ],
-                                function (err, res) {
-                                    if (err) throw err;
+                                console.log(currentStock);
 
-                                    console.log(`\nYou added ${addQuantity} to ${itemName};
+                                var newQuantity = currentStock + addQuantity;
+
+                                connection.query(
+                                    "UPDATE products SET stock_quantity = ? WHERE item_id = ?", [
+                                        newQuantity,
+                                        itemId
+                                    ],
+                                    function (err, res) {
+                                        if (err) throw err;
+
+                                        console.log(`\nYou added ${addQuantity} to ${itemName};
 New Quantity: ${newQuantity}\n`)
 
-                                    startUp();
+                                        startUp();
 
-                                }
-                            );
-                        });
+                                    }
+                                );
+                            });
+                    } else {
+                        console.log("\nUser inputs must fit given fields. Try again.\n")
+                        startUp();
+                    }
 
                 });
             };
@@ -200,22 +233,30 @@ New Quantity: ${newQuantity}\n`)
                     var itemPrice = parseFloat(choice.price);
                     var itemQuantity = parseInt(choice.quantity);
 
-                    connection.query(
-                        "INSERT INTO products(product_name,department_name,price,stock_quantity,product_sales) VALUES (?,?,?,?,0);",
-                        [itemName,
-                            itemDep,
-                            itemPrice,
-                            itemQuantity
-                        ],
-                        function (err, res) {
-                            if (err) throw err;
+                    if (itemPrice > 0 && itemQuantity > 0 && itemName.length > 0) {
+                        connection.query(
+                            "INSERT INTO products(product_name,department_name,price,stock_quantity,product_sales) VALUES (?,?,?,?,0);",
+                            [itemName,
+                                itemDep,
+                                itemPrice,
+                                itemQuantity
+                            ],
+                            function (err, res) {
+                                if (err) throw err;
 
-                            console.log(`\nYou added ${itemName} to products\n`)
+                                console.log(`\nYou added ${itemName} to products\n`)
 
-                            startUp();
+                                startUp();
 
-                        }
-                    );
+                            }
+                        );
+
+                    } else {
+                        console.log("\nUser inputs must fit given fields. Try again.\n")
+                        startUp();
+                    }
+
+
                 });
 
             };
