@@ -37,8 +37,8 @@ function afterConnection() {
             rowArr.push(res[i].item_id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity, res[i].product_sales);
             allProducts.push(rowArr);
         }
-        // table is an Array, so you can `push`, `unshift`, `splice` and friends
 
+        console.log("");
         console.log(allProducts.toString());
         console.log("");
         startUp();

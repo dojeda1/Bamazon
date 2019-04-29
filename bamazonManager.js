@@ -19,12 +19,16 @@ var connection = mysql.createConnection({
 connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
+    startUp();
 
+});
+
+function startUp() {
     inquirer.prompt({
             type: "list",
             message: "Which action would you like to perform?",
             name: "action",
-            choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
+            choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product", "< Exit"]
         },
 
     ).then(function (choice) {
@@ -45,10 +49,15 @@ connection.connect(function (err) {
             case "Add New Product":
                 addProduct();
                 break;
+
+            case "< Exit":
+                console.log("Good Bye.");
+                connection.end();
+                break;
         }
 
     })
-});
+}
 
 function viewProducts() {
     connection.query("SELECT * FROM products", function (err, res) {
@@ -66,9 +75,10 @@ function viewProducts() {
             allProducts.push(rowArr);
         }
 
+        console.log("");
         console.log(allProducts.toString());
         console.log("");
-        connection.end();
+        startUp();
     })
 };
 
@@ -87,9 +97,10 @@ function viewLowInv() {
             allProducts.push(rowArr);
         }
 
+        console.log("");
         console.log(allProducts.toString());
         console.log("");
-        connection.end();
+        startUp();
     })
 };
 
@@ -132,7 +143,7 @@ function addInv() {
                         console.log(`\nYou added ${addQuantity} to ${itemName};
 New Quantity: ${newQuantity}\n`)
 
-                        connection.end();
+                        startUp();
 
                     }
                 );
@@ -191,7 +202,7 @@ function addProduct() {
 
                 console.log(`\nYou added ${itemName} to products\n`)
 
-                connection.end();
+                startUp();
 
             }
         );

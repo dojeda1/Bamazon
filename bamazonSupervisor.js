@@ -62,6 +62,7 @@ ORDER BY departments.department_id;`, function (err, res) {
             allDepartments.push(rowArr);
         }
 
+        console.log("");
         console.log(allDepartments.toString());
         console.log("");
         connection.end();
