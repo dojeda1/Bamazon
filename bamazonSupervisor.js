@@ -1,6 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-
+var Table = require('cli-table');
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -44,13 +44,26 @@ connection.connect(function (err) {
 });
 
 function viewSales() {
-    connection.query(`SELECT departments.department_id,departments.department_name,departments.over_head_costs AS "Overhead" ,SUM(products.product_sales) AS "Total Sales", ( SUM(products.product_sales) - departments.over_head_costs) AS "Profit"
+    connection.query(`SELECT departments.department_id,departments.department_name,departments.over_head_costs AS "overhead" ,SUM(products.product_sales) AS "total_sales", ( SUM(products.product_sales) - departments.over_head_costs) AS "profit"
 FROM departments
 LEFT OUTER JOIN products ON departments.department_name = products.department_name
 GROUP BY products.department_name
 ORDER BY departments.department_id;`, function (err, res) {
         if (err) throw err;
-        console.log(res);
+        // console.log(res);
+        var allDepartments = new Table({
+            head: ['ID', 'Department', 'Overhead', 'Total Sales', 'Profit'],
+            colWidths: [10, 20, 15, 15, 15]
+        });
+
+        for (i = 0; i < res.length; i++) {
+            var rowArr = [];
+            rowArr.push(res[i].department_id, res[i].department_name, res[i].overhead, res[i].total_sales, res[i].profit);
+            allDepartments.push(rowArr);
+        }
+
+        console.log(allDepartments.toString());
+        console.log("");
         connection.end();
     })
 };
