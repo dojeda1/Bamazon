@@ -27,7 +27,7 @@ function customer(run) {
         connection.query("SELECT * FROM products", function (err, res) {
             if (err) throw err;
             // console.log(res);
-            highestId = res.length;
+
             var allProducts = new Table({
                 head: ['ID', 'Name', 'Department', 'Price', 'Quantity', 'Sales'],
                 colWidths: [10, 40, 20, 10, 10, 15]
@@ -61,14 +61,28 @@ function customer(run) {
             var itemId = choice.id;
             var buyQuantity = parseInt(choice.quantity);
 
-            if (itemId > 0 && itemId <= highestId && buyQuantity > 0) {
-                purchaseCheck(itemId, buyQuantity)
-            } else {
-                console.log("\nUser inputs must fit given fields. Try again.\n")
-                startUp();
-            }
+            var idPresent = false;
 
+            connection.query("SELECT item_id FROM products", function (err, res) {
+                var idArr = []
+                if (err) throw err;
+                // console.log(res)
+                for (i = 0; i < res.length; i++) {
+                    idArr.push(String(res[i].item_id));
+                }
+                idPresent = idArr.includes(itemId);
 
+                // console.log(idArr);
+
+                if (idPresent === true && buyQuantity > 0) {
+                    purchaseCheck(itemId, buyQuantity)
+                } else {
+                    console.log("\nUser inputs must fit given fields. Try again.\n")
+                    connection.end();
+                    run();
+                }
+
+            })
         })
     };
 
