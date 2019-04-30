@@ -60,7 +60,7 @@ function supervisor(run) {
             }
 
             function viewSales() {
-                connection.query(`SELECT departments.department_id,departments.department_name,departments.over_head_costs AS "overhead" ,SUM(products.product_sales) AS "total_sales", ( SUM(products.product_sales) - departments.over_head_costs) AS "profit"
+                connection.query(`SELECT departments.department_id,departments.department_name,departments.over_head_costs AS "overhead" ,SUM(IFNULL(products.product_sales,0)) AS "total_sales", ( SUM(IFNULL(products.product_sales,0)) - departments.over_head_costs) AS "profit"
 FROM departments
 LEFT OUTER JOIN products ON departments.department_name = products.department_name
 GROUP BY products.department_name
