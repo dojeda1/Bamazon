@@ -6,6 +6,8 @@ This is a node app that allows users to view products stored on a local mySQL da
 
   **View Video Demo [Here!](https://www.youtube.com/watch?v=kf_w-kgh6QA)**
 
+![Web App Image](./demo.png)
+
 ### Technologies used
 
 * JavaScript
